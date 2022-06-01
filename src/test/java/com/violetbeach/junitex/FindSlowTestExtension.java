@@ -1,11 +1,9 @@
 package com.violetbeach.junitex;
 
-import jdk.jfr.Threshold;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import javax.xml.stream.events.Namespace;
 import java.lang.reflect.Method;
 
 public class FindSlowTestExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
