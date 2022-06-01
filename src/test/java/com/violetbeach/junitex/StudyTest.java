@@ -70,6 +70,13 @@ public class StudyTest {
         assertTimeoutPreemptively(Duration.ofSeconds(10), () -> new Study(10));
     }
 
+    @DisplayName("반복 테스트")
+    @RepeatedTest(value = 10, name = "{displayName}, {currentRepetition} / {totalRepetitions}")
+    void repeatTest(RepetitionInfo repetitionInfo) {
+        Study study = new Study(repetitionInfo.getCurrentRepetition());
+        assertNotNull(study);
+    }
+
     @Test
     @Disabled
     @DisplayName("보수 중")
