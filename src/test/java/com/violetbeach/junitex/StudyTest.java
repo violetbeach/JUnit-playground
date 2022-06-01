@@ -13,6 +13,7 @@ public class StudyTest {
 
     @Test
     @DisplayName("스터디 만들기 😲")
+    @Tag("fast")
     void create() {
         Study study = new Study(10);
         assertAll(
@@ -25,6 +26,7 @@ public class StudyTest {
     }
 
     @Test
+    @Tag("slow")
     @DisplayName("스터디 만들기 assume 😲")
     void assume() {
         String test_env = System.getenv("TEST_ENV");
