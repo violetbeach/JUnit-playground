@@ -2,6 +2,8 @@ package com.violetbeach.junitex;
 
 import org.junit.jupiter.api.*;
 
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -27,6 +29,18 @@ public class StudyTest {
         IllegalArgumentException exception =
                 assertThrows(IllegalArgumentException.class, () -> new Study(-10));
         assertEquals("limit은 0보다 커야 한다.", exception.getMessage());
+    }
+
+    @Test
+    void create_new_study_timeout() {
+        assertTimeout(Duration.ofSeconds(10), () -> new Study(10));
+    }
+
+    @Test
+    void create_new_study_timeoutPt() {
+        // 해당 시간이 지나면 즉시 테스트 실패
+        // 별도의 스레드에서 테스트하기 때문에 주의필요!
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> new Study(10));
     }
 
     @Test
