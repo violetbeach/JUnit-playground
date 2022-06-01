@@ -1,6 +1,7 @@
 package com.violetbeach.junitex;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.Duration;
 
@@ -8,8 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(FindSlowTestExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StudyTest {
 
@@ -32,7 +32,7 @@ public class StudyTest {
     @Test
     @Tag("slow")
     @DisplayName("스터디 만들기 assume 😲")
-    void assume() {
+    void assume() throws InterruptedException {
         String test_env = System.getenv("TEST_ENV");
         assumeTrue("LOCAL".equalsIgnoreCase(test_env));
 
@@ -56,7 +56,8 @@ public class StudyTest {
 
     @Test
     @DisplayName("limit은 0보다 커야 한다.")
-    void create_new_study() {
+    void create_new_study() throws InterruptedException {
+        Thread.sleep(1005L);
         IllegalArgumentException exception =
                 assertThrows(IllegalArgumentException.class, () -> new Study(-10));
         assertEquals("limit은 0보다 커야 한다.", exception.getMessage());
