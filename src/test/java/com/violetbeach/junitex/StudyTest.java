@@ -10,8 +10,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StudyTest {
 
+    @Order(2)
     @Test
     @DisplayName("스터디 만들기 😲")
     @Tag("fast")
@@ -26,6 +28,7 @@ public class StudyTest {
         );
     }
 
+    @Order(1)
     @Test
     @Tag("slow")
     @DisplayName("스터디 만들기 assume 😲")
