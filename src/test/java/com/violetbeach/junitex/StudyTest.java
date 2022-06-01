@@ -4,7 +4,9 @@ import org.junit.jupiter.api.*;
 
 import java.time.Duration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class StudyTest {
@@ -20,7 +22,30 @@ public class StudyTest {
                 () -> assertTrue(study.getLimit() > 0,
                         () -> "스터 디 최대 참석 가능 인원은 0보다 커야 한다.")
         );
+    }
 
+    @Test
+    @DisplayName("스터디 만들기 assume 😲")
+    void assume() {
+        String test_env = System.getenv("TEST_ENV");
+        assumeTrue("LOCAL".equalsIgnoreCase(test_env));
+
+        Study study = new Study(10);
+        assertNotNull(study);
+    }
+
+    @Test
+    @DisplayName("스터디 만들기 assume 😲")
+    void assumingThat() {
+        String test_env = System.getenv("TEST_ENV");
+        Study study = new Study(10);
+        Assumptions.assumingThat("LOCAL".equalsIgnoreCase(test_env), () -> {
+            assertThat(study.getLimit()).isGreaterThan(0);
+        });
+
+        Assumptions.assumingThat("PROD".equalsIgnoreCase(test_env), () -> {
+            assertThat(study.getLimit()).isGreaterThan(-1);
+        });
     }
 
     @Test
