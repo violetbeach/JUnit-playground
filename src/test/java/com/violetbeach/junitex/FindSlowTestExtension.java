@@ -11,7 +11,7 @@ public class FindSlowTestExtension implements BeforeTestExecutionCallback, After
     private static final long Threshold = 1000L;
 
     @Override
-    public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {
+    public void beforeTestExecution(ExtensionContext extensionContext) {
         ExtensionContext.Store store = getStore(extensionContext);
         store.put("START_TIME", System.currentTimeMillis());
     }
@@ -19,12 +19,11 @@ public class FindSlowTestExtension implements BeforeTestExecutionCallback, After
     private ExtensionContext.Store getStore(ExtensionContext extensionContext) {
         String testClassName = extensionContext.getRequiredTestClass().getName();
         String testMethodName = extensionContext.getRequiredTestMethod().getName();
-        ExtensionContext.Store store = extensionContext.getStore(ExtensionContext.Namespace.create(testClassName, testMethodName));
-        return store;
+        return extensionContext.getStore(ExtensionContext.Namespace.create(testClassName, testMethodName));
     }
 
     @Override
-    public void afterTestExecution(ExtensionContext extensionContext) throws Exception {
+    public void afterTestExecution(ExtensionContext extensionContext) {
         Method requiredTestMethod = extensionContext.getRequiredTestMethod();
         SlowTest annotation = requiredTestMethod.getAnnotation(SlowTest.class);
         String testMethodName = extensionContext.getRequiredTestMethod().getName();
