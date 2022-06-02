@@ -1,13 +1,13 @@
-package com.violetbeach.junitex;
+package me.whiteship.inflearnthejavatest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JunitstudyApplication {
+public class App {
 
     public static void main(String[] args) {
-        SpringApplication.run(JunitstudyApplication.class, args);
+        SpringApplication.run(App.class, args);
     }
 
 }
