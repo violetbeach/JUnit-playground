@@ -12,8 +12,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class StudyServiceTest {
@@ -42,6 +41,14 @@ public class StudyServiceTest {
         when(memberService.findById(any())).thenThrow(new IllegalArgumentException());
         doThrow(new IllegalArgumentException()).when(memberService).validate(1L);
 
+        when(memberService.findById(any()))
+                .thenReturn(Optional.of(member))
+                        .thenThrow(new RuntimeException())
+                                .thenReturn(Optional.empty());
+
         assertNotNull(studyService);
+
+        verify(memberService, times(1)).findById(1L);
+        verify(memberService, never()).findById(1L).
     }
 }
