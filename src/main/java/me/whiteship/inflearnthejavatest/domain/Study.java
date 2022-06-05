@@ -5,10 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.whiteship.inflearnthejavatest.study.StudyStatus;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,8 +18,7 @@ public class Study {
     private int limitCount;
     private String name;
     private LocalDateTime openedDateTime;
-    @ManyToOne
-    private Member owner;
+    private Long ownerId;
 
     public Study(int limit, String name) {
         this.limitCount = limit;
@@ -36,7 +32,7 @@ public class Study {
         this.limitCount = limit;
     }
 
-    public void publish() {
+    public void open() {
         this.openedDateTime = LocalDateTime.now();
         this.status = StudyStatus.OPENED;
     }

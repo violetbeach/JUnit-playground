@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class StudyRepositoryTest {
@@ -16,6 +16,7 @@ class StudyRepositoryTest {
 
     @Test
     void save() {
+        repository.deleteAll();
         Study study = new Study(10, "Java");
         repository.save(study);
         List<Study> all = repository.findAll();

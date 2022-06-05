@@ -3,52 +3,70 @@ package me.whiteship.inflearnthejavatest.study;
 import me.whiteship.inflearnthejavatest.domain.Member;
 import me.whiteship.inflearnthejavatest.domain.Study;
 import me.whiteship.inflearnthejavatest.member.MemberService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
-public class StudyServiceTest {
+@ActiveProfiles("test")
+class StudyServiceTest {
 
-    @Mock
-    MemberService memberService;
+    @Mock MemberService memberService;
 
-    @Mock
-    StudyRepository studyRepository;
+    @Autowired StudyRepository studyRepository;
 
     @Test
-    void createStudyService() {
+    void createNewStudy() {
+        // Given
         StudyService studyService = new StudyService(memberService, studyRepository);
+        assertNotNull(studyService);
 
         Member member = new Member();
         member.setId(1L);
-        member.setEmail("keesun@gmail.com");
+        member.setEmail("keesun@email.com");
 
-        when(memberService.findById(any())).thenReturn(Optional.of(member));
-        Study study = new Study(10, "java");
+        Study study = new Study(10, "테스트");
 
-        Optional<Member> findById = memberService.findById(1L);
+        given(memberService.findById(1L)).willReturn(Optional.of(member));
 
-        Study newStudy = studyService.createNewStudy(1L, study);
+        // When
+        studyService.createNewStudy(1L, study);
 
-        when(memberService.findById(any())).thenThrow(new IllegalArgumentException());
-        doThrow(new IllegalArgumentException()).when(memberService).validate(1L);
-
-        when(memberService.findById(any()))
-                .thenReturn(Optional.of(member))
-                        .thenThrow(new RuntimeException())
-                                .thenReturn(Optional.empty());
-
-        assertNotNull(studyService);
-
-        verify(memberService, times(1)).findById(1L);
-        verify(memberService, never()).findById(1L).
+        // Then
+        assertEquals(1L, study.getOwnerId());
+        then(memberService).should(times(1)).notify(study);
+        then(memberService).shouldHaveNoMoreInteractions();
     }
+
+    @DisplayName("다른 사용자가 볼 수 있도록 스터디를 공개한다.")
+    @Test
+    void openStudy() {
+        // Given
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        Study study = new Study(10, "더 자바, 테스트");
+        assertNull(study.getOpenedDateTime());
+
+        // When
+        studyService.openStudy(study);
+
+        // Then
+        assertEquals(StudyStatus.OPENED, study.getStatus());
+        assertNotNull(study.getOpenedDateTime());
+        then(memberService).should().notify(study);
+    }
+
 }
