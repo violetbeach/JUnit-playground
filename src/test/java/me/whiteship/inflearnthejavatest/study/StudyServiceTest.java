@@ -1,8 +1,11 @@
 package me.whiteship.inflearnthejavatest.study;
 
+import lombok.extern.slf4j.Slf4j;
 import me.whiteship.inflearnthejavatest.domain.Member;
 import me.whiteship.inflearnthejavatest.domain.Study;
 import me.whiteship.inflearnthejavatest.member.MemberService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 
@@ -23,11 +31,25 @@ import static org.mockito.Mockito.times;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
+@Testcontainers
+@Slf4j
 class StudyServiceTest {
 
     @Mock MemberService memberService;
 
     @Autowired StudyRepository studyRepository;
+
+    @Container
+    static GenericContainer postgreSQLContainer =  new GenericContainer("postgres:13.3")
+            .withExposedPorts(5432)
+            .withEnv("POSTGRES_PASSWORD", "root")
+            .withEnv("POSTGRES_DB", "testDB");
+
+    @BeforeAll
+    static void beforeAll() {
+        Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(log);
+        postgreSQLContainer.followOutput(logConsumer);
+    }
 
     @Test
     void createNewStudy() {
@@ -52,7 +74,6 @@ class StudyServiceTest {
         then(memberService).shouldHaveNoMoreInteractions();
     }
 
-    @DisplayName("다른 사용자가 볼 수 있도록 스터디를 공개한다.")
     @Test
     void openStudy() {
         // Given
